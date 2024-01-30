@@ -1,5 +1,4 @@
-const { Phaser } = require("../../lib/phaser")
-
+//const { Phaser } = require("../../lib/phaser")
 // Rocket prefab
 class Rocket extends Phaser.GameObjects.Sprite 
 {
@@ -11,6 +10,7 @@ class Rocket extends Phaser.GameObjects.Sprite
       scene.add.existing(this)
       this.isFiring = false
       this.moveSpeed = 2
+      this.sfxShot = scene.sound.add('sfx-shot')
     }
 
     update()
@@ -25,18 +25,29 @@ class Rocket extends Phaser.GameObjects.Sprite
             }
         }
 
-        //fire buttons
-        if(Phaser.Input.Keyboard.JustDown(keyFIRE)){
+        // fire button
+        if (Phaser.Input.Keyboard.JustDown(keyFIRE) && !this.isFiring) 
+        {
             this.isFiring = true
+            this.sfxShot.play()
         }
         //if fired, move up
-        if(this.isFiring && this.y >= borderUISize * 3 + borderPadding){
+        if(this.isFiring && this.y >= borderUISize * 3 + borderPadding)
+        {
             this.y -= this.moveSpeed
         }
         //reset on miss
-        if(this.y <= borderUISize * 3 + borderPadding){
+        if(this.y <= borderUISize * 3 + borderPadding)
+        {
             this.isFiring = false
             this.y = game.config.height - borderUISize - borderPadding
         }
+    }
+
+    //reset rocket to the ground
+    reset()
+    {
+        this.isFiring = false
+        this.y = game.config.height - borderUISize - borderPadding
     }
 }
